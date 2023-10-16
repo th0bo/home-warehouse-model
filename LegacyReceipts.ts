@@ -1,11 +1,13 @@
-function main() {
+function extractAndStoreLegacyReceiptsData() {
   const folder = DriveApp.getFoldersByName("Receipts").next();
   const fileIterator = folder.getFiles();
   while (fileIterator.hasNext()) {
     const file = fileIterator.next();
     if (file.getName().startsWith("Votre ticket de caisse du")) {
-      const itemLines = LegacyReceipts.extractItemLines(file.getBlob().getDataAsString());
-      storeItemLines(itemLines);
+      const itemLines = LegacyReceipts.extractItemLines(
+        file.getBlob().getDataAsString()
+      );
+      DataStorage.storeItemLines(itemLines);
     }
     // while (fileIterator.hasNext()) {
     //   fileIterator.next();
