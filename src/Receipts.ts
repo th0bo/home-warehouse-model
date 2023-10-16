@@ -15,7 +15,7 @@ function main() {
 }
 
 namespace Receipts {
-  const labelName = "admin/courses";
+  const labelName = "receipts";
   const label = GmailApp.getUserLabelByName(labelName);
 
   const emailFrom = "contact@email.notification.supermarchesmatch.fr";
