@@ -21,9 +21,8 @@ namespace Receipts {
   const emailFrom = "contact@email.notification.supermarchesmatch.fr";
   const emailSubject = "Votre ticket de caisse";
 
-  const dateRegExp = /(\d{2})\/(\d{2})\/(\d{4})/;
   const itemLineRegExp =
-    /<tr.*?>.*?<td.*?>\s*([A-Z0-9 \.\-]*?)\s*<\/td>.*?<td.*?>\s*(\d+)\s*<\/td>.*?<td.*?>(.*?)<\/td>.*?<td.*?>(.*?)<\/td>.*?<td.*?>(.*?)<\/td>.*?<\/tr>/;
+    /<tr.*?>.*?<td.*?>\s*([^a-z<>]*?)\s*<\/td>.*?<td.*?>\s*(\d+)\s*<\/td>.*?<td.*?>(.*?)<\/td>.*?<td.*?>(.*?)<\/td>.*?<td.*?>(.*?)<\/td>.*?<\/tr>/;
 
   export function extractItemLines(messageBody: string) {
     const dateMatcher = messageBody.match(dateRegExp) as RegExpMatchArray;

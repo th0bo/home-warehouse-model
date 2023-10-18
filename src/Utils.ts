@@ -10,3 +10,5 @@ function getLabeledThreadsIds() {
     )
     .map((thread) => thread.getId());
 }
+
+const dateRegExp = /(\d{2})\/(\d{2})\/(\d{4})/;
