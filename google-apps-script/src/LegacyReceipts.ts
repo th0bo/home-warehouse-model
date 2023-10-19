@@ -12,7 +12,7 @@ function extractAndStoreLegacyReceiptsData() {
     //   fileIterator.next();
     // }
   }
-  Logger.log(fileNames);
+  
   fileNames.sort((a, b) => {
     const aMatcher = a.match(dateRegExp) as RegExpMatchArray;
     const bMatcher = b.match(dateRegExp) as RegExpMatchArray;
@@ -22,7 +22,6 @@ function extractAndStoreLegacyReceiptsData() {
       .join("")
       .localeCompare(bMatcher.slice(1).reverse().join(""));
   });
-  Logger.log(fileNames);
 
   for (const fileName of fileNames) {
     const file = folder.getFilesByName(fileName).next();
