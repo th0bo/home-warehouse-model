@@ -12,3 +12,7 @@ function getLabeledThreadsIds() {
 }
 
 const dateRegExp = /(\d{2})\/(\d{2})\/(\d{4})/;
+
+function getDriveFileId(name: string) {
+  return DriveApp.getFilesByName(name).next().getId();
+}
