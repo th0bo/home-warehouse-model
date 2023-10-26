@@ -14,7 +14,7 @@ namespace DataStorage {
       { values: itemLines },
       spreadsheetId,
       sheetName,
-      { valueInputOption: "RAW" }
+      { valueInputOption: "USER_ENTERED" }
     );
   }
 
