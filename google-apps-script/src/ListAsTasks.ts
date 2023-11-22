@@ -20,10 +20,13 @@ namespace ListAsTasks {
   const taskListId = (() => {
     for (const taskList of taskListsModule.list().items ?? []) {
       if (taskList.title === taskListName) {
+        Logger.log(`Found task list ${taskListName} - ${taskList.id}.`);
         return taskList.id as string;
       }
     }
-    return taskListsModule.insert({ title: taskListName }).id as string;
+    const taskList = taskListsModule.insert({ title: taskListName });
+    Logger.log(`Created task list ${taskListName} - ${taskList.id}.`);
+    return taskList.id as string;
   })();
 
   const getExistingItems = () => {
