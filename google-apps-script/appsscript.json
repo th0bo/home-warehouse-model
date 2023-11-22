@@ -21,6 +21,11 @@
         "userSymbol": "Docs",
         "version": "v1",
         "serviceId": "docs"
+      },
+      {
+        "userSymbol": "Tasks",
+        "version": "v1",
+        "serviceId": "tasks"
       }
     ]
   },
