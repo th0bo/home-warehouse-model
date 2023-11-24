@@ -7,11 +7,11 @@ interface Amount {
 
 interface ReceiptLine {
   itemLabel: string;
-  quantity: string;
+  quantity: number;
   vat: string;
-  unitPrice: string;
-  amount: string;
-  date: string;
+  unitPrice: number;
+  amount: number;
+  date: number;
 }
 
 interface ListItem {
@@ -19,12 +19,12 @@ interface ListItem {
   weight: number;
 }
 
-type MatchedReceiptItemLine = ReceiptLine & ListItem;
-
-/**
- * label, quantity, vat, unitPrice, amount
- */
+/** label, quantity, vat, unitPrice, amount */
 type ParsedReceiptLine = [string, string, string, string, string];
+/** label, quantity, vat, unitPrice, amount, date */
+type FormattedReceiptLine = [...ParsedReceiptLine, string];
+/** label, quantity, vat, unitPrice, amount, date */
+type UnformattedReceiptLine = [string, number, string, number, number, number];
 
 interface ParsedReceipt {
   lines: ParsedReceiptLine[];

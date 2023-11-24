@@ -2,15 +2,12 @@ namespace DriveDataStorer {
   const sheetName = "ReceiptLine";
   const spreadsheetId = "1x_uln6FPZ2cvUlhar8wk-ZmrlaxECgQSOH_pqQs221I";
 
-  type FormattedReceiptLine = [string, string, string, string, string, string];
-
-  export const write = (receiptLines: ReceiptLine[]) => {
+  export const write = (receiptLines: FormattedReceiptLine[]) => {
     const append = Sheets.Spreadsheets?.Values?.append;
     if (append === undefined) {
       throw new Error("Drive API unavailable.");
     }
-    const values = receiptLines.map(formatReceiptLine);
-    append({ values }, spreadsheetId, sheetName, {
+    append({ values: receiptLines }, spreadsheetId, sheetName, {
       valueInputOption: "USER_ENTERED",
     });
   };
@@ -20,23 +17,13 @@ namespace DriveDataStorer {
     if (get === undefined) {
       throw new Error("Drive API unavailable.");
     }
-    const values = get(spreadsheetId, "ReceiptLine!A2:F")
-      .values as FormattedReceiptLine[];
+    const values = get(spreadsheetId, "ReceiptLine!A2:F", {
+      valueRenderOption: "UNFORMATTED_VALUE",
+    }).values as UnformattedReceiptLine[];
     return values.map(parseReceiptLine);
   };
 
-  type FormatReceiptLine = (line: ReceiptLine) => FormattedReceiptLine;
-
-  const formatReceiptLine: FormatReceiptLine = ({
-    itemLabel,
-    quantity,
-    vat,
-    unitPrice,
-    amount,
-    date,
-  }) => [itemLabel, quantity, vat, unitPrice, amount, date];
-
-  type ParseReceiptLine = (line: FormattedReceiptLine) => ReceiptLine;
+  type ParseReceiptLine = (line: UnformattedReceiptLine) => any;
 
   const parseReceiptLine: ParseReceiptLine = ([
     itemLabel,

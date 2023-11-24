@@ -8,7 +8,7 @@ namespace Stats {
     const labels: string[] = [];
 
     for (const line of lines) {
-      const { commonLabel: label, amount: dy, date: x } = quantify(line);
+      const { commonLabel: label, amount: dy, date: x } = line;
 
       const dataSet =
         labelToDataSet.get(label) ??
@@ -25,35 +25,25 @@ namespace Stats {
     return labels.map((label) => {
       const dataSet = labelToDataSet.get(label);
       if (dataSet === undefined || dataSet.length < 2) {
-        return { label, diff: null, meanY: null };
+        return { label, diff: null, meanDy: null };
       }
       /**
        * This value should give the value threshold of diff, when diff is near or higher
        * than this value a refill should be considered.
        */
-      const meanY = dataSet.reduce((sum, { y }) => sum + y, 0) / dataSet.length;
+      const meanDy = dataSet[dataSet.length - 1].y / dataSet.length;
       const { intercept, slope } = linearRegression(dataSet);
-      const yForecast = intercept + slope * new Date().getTime();
+
+      const nDaysFrom1900ToNow = (() => {
+        const d = new Date();
+        d.setFullYear(d.getFullYear() + 70);
+        return d.getTime() / (1000 * 60 * 60 * 24)
+      })()
+
+      const yForecast = intercept + slope * nDaysFrom1900ToNow;
       const diff = yForecast - dataSet[dataSet.length - 1].y;
-      return { label, diff, meanY };
+      return { label, diff, meanDy };
     });
-  };
-
-  const quantify = ({ commonLabel, amount, date }: MatchedReceiptLine) => {
-    const dateMatcher = date.match(dateRegExp);
-    if (dateMatcher === null) {
-      throw new Error(`[${date}] could not be parsed as a date.`);
-    }
-
-    const day = Number(dateMatcher[1]);
-    const monthIndex = Number(dateMatcher[2]) - 1;
-    const year = Number(dateMatcher[3]);
-
-    return {
-      commonLabel,
-      amount: parseFloat(amount.replace(/\s/g, "").replace(",", ".")),
-      date: new Date(year, monthIndex, day).getTime(),
-    };
   };
 
   const linearRegression = (data: Array<{ x: number; y: number }>) => {
