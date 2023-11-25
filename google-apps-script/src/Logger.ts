@@ -17,7 +17,7 @@ const logDriveReceipts = () => {
 
 const logRegressions = () => {
   for (const item of Stats.computeRegressions(
-    DriveDataStorer.read().map(({ itemLabel, ...rest }) => ({
+    SheetsReceiptLineData.read().map(({ itemLabel, ...rest }) => ({
       itemLabel,
       ...rest,
       commonLabel: itemLabel,
@@ -53,15 +53,21 @@ const logLabelledThreadsIds = () => {
 };
 
 const logStoredReceiptLines = () => {
-  Logger.log(JSON.stringify(DriveDataStorer.read()));
+  Logger.log(JSON.stringify(SheetsReceiptLineData.read()));
 };
 
 const logDriveFileId = () => {
-  const fileName = "";
+  const fileName = "Liste de courses";
   const i = DriveApp.getFilesByName(fileName);
   const ids: string[] = [];
-  while (i.hasNext) {
+  while (i.hasNext()) {
     ids.push(i.next().getId());
   }
   Logger.log(JSON.stringify(ids));
 };
+
+const logDriveFileContent = () => {
+  const doc = DocumentApp.openById("1qKBWWGhm_ssx-gy6C5jmogpPXkQy3PxIYGOmfdtYdTQ");
+  const body = doc.getBody();
+  Logger.log(body.asText().getText());
+}

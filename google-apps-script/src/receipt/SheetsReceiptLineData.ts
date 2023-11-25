@@ -1,4 +1,4 @@
-namespace DriveDataStorer {
+namespace SheetsReceiptLineData {
   const sheetName = "ReceiptLine";
   const spreadsheetId = "1x_uln6FPZ2cvUlhar8wk-ZmrlaxECgQSOH_pqQs221I";
 
@@ -40,21 +40,4 @@ namespace DriveDataStorer {
     amount,
     date,
   });
-}
-
-namespace DataStorage {
-  const docId = "1whQ3g3txfRHlrDqF1EyhOnJgSwdgtlogVHPjXjQjUEU";
-
-  export function storeGroceriesList(list: string[]) {
-    const doc = DocumentApp.openById(docId);
-    const body = doc.getBody();
-    const existingChildrenCount = body.getNumChildren();
-    for (const item of list) {
-      body.appendListItem(item);
-    }
-    for (let i = 0; i < existingChildrenCount; i++) {
-      body.getChild(i).removeFromParent();
-    }
-    doc.saveAndClose();
-  }
 }

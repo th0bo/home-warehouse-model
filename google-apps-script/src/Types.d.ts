@@ -38,3 +38,5 @@ interface FetchedReceipt {
 }
 
 type FetchReceipts<T extends FetchedReceipt> = () => T[];
+
+type GroceriesList = string[];

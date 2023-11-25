@@ -1,7 +1,7 @@
 namespace TasksGroceriesList {
   const tasksListName = "Courses";
 
-  export const addItemsAsTasks = (labels: string[]) => {
+  export const write = (groceriesList: GroceriesList) => {
     const tasksList = obtainTasksList(tasksListName);
     const tasksListId = tasksList.id;
 
@@ -21,7 +21,7 @@ namespace TasksGroceriesList {
       throw new Error(`Tasks API unavailable.`);
     }
 
-    labels.forEach((itemLabel, pos) => {
+    groceriesList.forEach((itemLabel, pos) => {
       const task = {
         title: itemLabel,
         status: "needsAction",

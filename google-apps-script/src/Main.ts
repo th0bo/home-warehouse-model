@@ -8,10 +8,10 @@ const storeDriveReceipts = () => {
 const processGmailReceipts = () => {
   const gmailReceipts = GmailReceiptFetcher.fetch();
 
-  DriveDataStorer.write(
+  SheetsReceiptLineData.write(
     gmailReceipts
       .map(({ data }) =>
-        ReceiptItemLineBuilder.build(GmailReceiptParser.parse(data))
+        ReceiptLineBuilder.build(GmailReceiptParser.parse(data))
       )
       .flat()
   );
@@ -19,8 +19,20 @@ const processGmailReceipts = () => {
   GmailReceiptFetcher.flagAsProcessed(gmailReceipts);
 };
 
-const addListAsTasks = () => {
-  TasksGroceriesList.addItemsAsTasks([
+const storeListToTasks = () => {
+  TasksGroceriesList.write([
+    "bananes",
+    "avoine",
+    "oeufs",
+    "lait",
+    "yahourts",
+    "pommes",
+    "carottes",
+  ]);
+};
+
+const storeListToDocs = () => {
+  DocsDataStore.write([
     "bananes",
     "avoine",
     "oeufs",
