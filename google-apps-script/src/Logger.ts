@@ -16,14 +16,24 @@ const logDriveReceipts = () => {
 };
 
 const logRegressions = () => {
-  for (const { label, diff, meanDy } of Stats.computeRegressions(
+  for (const item of Stats.computeRegressions(
     DriveDataStorer.read().map(({ itemLabel, ...rest }) => ({
       itemLabel,
       ...rest,
       commonLabel: itemLabel,
     }))
-  )) {
-    Logger.log(`${label} ${diff} / ${meanDy}`);
+  )
+    .filter(
+      ({ diff, meanDy }) =>
+        typeof diff === "number" && typeof meanDy === "number"
+    )
+    .map((elem) => ({
+      ...elem,
+      coeff: (elem.diff as number) / (elem.meanDy as number),
+    }))
+    .sort(({ coeff: coeff0 }, { coeff: coeff1 }) => coeff1 - coeff0)) {
+    // Logger.log(JSON.stringify(item));
+    Logger.log(`${item.label} ${item.diff} / ${item.meanDy}`);
   }
 };
 
@@ -44,7 +54,7 @@ const logLabelledThreadsIds = () => {
 
 const logStoredReceiptLines = () => {
   Logger.log(JSON.stringify(DriveDataStorer.read()));
-}
+};
 
 const logDriveFileId = () => {
   const fileName = "";
@@ -54,4 +64,4 @@ const logDriveFileId = () => {
     ids.push(i.next().getId());
   }
   Logger.log(JSON.stringify(ids));
-}
+};

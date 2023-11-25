@@ -18,9 +18,25 @@ namespace Stats {
           labelToDataSet.set(label, newDataSet);
           return newDataSet;
         })();
-      const y = dataSet.length === 0 ? dy : dataSet[dataSet.length - 1].y + dy;
-      dataSet.push({ x, y });
+      const lastDot = dataSet[dataSet.length - 1] as
+        | { x: number; y: number }
+        | undefined;
+      if (lastDot !== undefined) {
+        if (lastDot.x === x) {
+          lastDot.y += dy;
+        } else {
+          // for (let i = lastDot.x + 1; i++; i < x) {
+          //   dataSet.push({ x: i, y: lastDot.y });
+          // }
+          const y = lastDot.y + dy;
+          dataSet.push({ x, y });
+        }
+      } else {
+        dataSet.push({ x, y: dy });
+      }
     }
+
+    Logger.log(JSON.stringify(labelToDataSet.get("CANALISATION MENTH")));
 
     return labels.map((label) => {
       const dataSet = labelToDataSet.get(label);
@@ -37,12 +53,12 @@ namespace Stats {
       const nDaysFrom1900ToNow = (() => {
         const d = new Date();
         d.setFullYear(d.getFullYear() + 70);
-        return d.getTime() / (1000 * 60 * 60 * 24)
-      })()
+        return d.getTime() / (1000 * 60 * 60 * 24);
+      })();
 
       const yForecast = intercept + slope * nDaysFrom1900ToNow;
       const diff = yForecast - dataSet[dataSet.length - 1].y;
-      return { label, diff, meanDy };
+      return { label, diff, meanDy, intercept, slope };
     });
   };
 
