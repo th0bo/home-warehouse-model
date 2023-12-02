@@ -13,7 +13,7 @@ namespace GmailReceiptParser {
         .filter((matcher) => matcher !== null) as RegExpMatchArray[]
     ).map(
       ([line, ...parsedReceiptItemLine]: [string, ...ParsedReceiptLine]) =>
-        parsedReceiptItemLine.map(str => str.replace("&nbsp;", " ")) as ParsedReceiptLine
+        parsedReceiptItemLine.map(str => str.replace(/&nbsp;/g, " ")) as ParsedReceiptLine
     );
     return { lines, date };
   };

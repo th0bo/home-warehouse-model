@@ -16,12 +16,13 @@ const logDriveReceipts = () => {
 };
 
 const logRegressions = () => {
+  const receiptLabelToListLabel = new Map(SheetsReceiptLineData.getMap());
   for (const item of Stats.computeRegressions(
     SheetsReceiptLineData.read().map(({ itemLabel, ...rest }) => ({
       itemLabel,
       ...rest,
-      commonLabel: itemLabel,
-    }))
+      commonLabel: receiptLabelToListLabel.get(itemLabel) ?? "",
+    })).filter(({ commonLabel }) => commonLabel !== "")
   )
     .filter(
       ({ diff, meanDy }) =>

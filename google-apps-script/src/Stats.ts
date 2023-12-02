@@ -4,7 +4,7 @@ namespace Stats {
   type MatchedReceiptLine = ReceiptLine & { commonLabel: string };
 
   export const computeRegressions = (lines: MatchedReceiptLine[]) => {
-    const labelToDataSet = new Map<string, Array<{ x: number; y: number }>>();
+    const labelToDataSet = new Map<string, Array<{ x: number; y: number, dy: number }>>();
     const labels: string[] = [];
 
     for (const line of lines) {
@@ -25,18 +25,16 @@ namespace Stats {
         if (lastDot.x === x) {
           lastDot.y += dy;
         } else {
-          // for (let i = lastDot.x + 1; i++; i < x) {
+          // for (let i = lastDot.x + 1; i < x; i++) {
           //   dataSet.push({ x: i, y: lastDot.y });
           // }
           const y = lastDot.y + dy;
-          dataSet.push({ x, y });
+          dataSet.push({ x, y, dy });
         }
       } else {
-        dataSet.push({ x, y: dy });
+        dataSet.push({ x, y: dy, dy });
       }
     }
-
-    Logger.log(JSON.stringify(labelToDataSet.get("CANALISATION MENTH")));
 
     return labels.map((label) => {
       const dataSet = labelToDataSet.get(label);
@@ -47,7 +45,7 @@ namespace Stats {
        * This value should give the value threshold of diff, when diff is near or higher
        * than this value a refill should be considered.
        */
-      const meanDy = dataSet[dataSet.length - 1].y / dataSet.length;
+      const meanDy = dataSet.map(({ dy }) => dy).reduce((a, b) => a + b, 0) / dataSet.length;
       const { intercept, slope } = linearRegression(dataSet);
 
       const nDaysFrom1900ToNow = (() => {
