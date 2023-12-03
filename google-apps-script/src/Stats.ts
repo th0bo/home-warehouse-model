@@ -1,40 +1,25 @@
 namespace Stats {
   const dateRegExp = /(\d{2})\/(\d{2})\/(\d{4})/;
 
-  type MatchedReceiptLine = ReceiptLine & { commonLabel: string };
+  interface Dot {
+    x: number;
+    y: number;
+    dy: number;
+  }
 
-  export const computeRegressions = (lines: MatchedReceiptLine[]) => {
-    const labelToDataSet = new Map<string, Array<{ x: number; y: number, dy: number }>>();
-    const labels: string[] = [];
+  export const computeRegressions = (
+    mappedLines: Map<string, MatchedReceiptLine[]>
+  ) => {
+    const labelToDataSet = new Map<string, Dot[]>();
 
-    for (const line of lines) {
-      const { commonLabel: label, amount: dy, date: x } = line;
-
-      const dataSet =
-        labelToDataSet.get(label) ??
-        (() => {
-          labels.push(label);
-          const newDataSet = [];
-          labelToDataSet.set(label, newDataSet);
-          return newDataSet;
-        })();
-      const lastDot = dataSet[dataSet.length - 1] as
-        | { x: number; y: number }
-        | undefined;
-      if (lastDot !== undefined) {
-        if (lastDot.x === x) {
-          lastDot.y += dy;
-        } else {
-          // for (let i = lastDot.x + 1; i < x; i++) {
-          //   dataSet.push({ x: i, y: lastDot.y });
-          // }
-          const y = lastDot.y + dy;
-          dataSet.push({ x, y, dy });
-        }
-      } else {
-        dataSet.push({ x, y: dy, dy });
-      }
+    for (const commonLabel of [...mappedLines.keys()]) {
+      const usedLines = (
+        mappedLines.get(commonLabel) as MatchedReceiptLine[]
+      );
+      labelToDataSet.set(commonLabel, makeDots(usedLines).slice(-4));
     }
+
+    const labels = [...labelToDataSet.keys()];
 
     return labels.map((label) => {
       const dataSet = labelToDataSet.get(label);
@@ -45,7 +30,9 @@ namespace Stats {
        * This value should give the value threshold of diff, when diff is near or higher
        * than this value a refill should be considered.
        */
-      const meanDy = dataSet.map(({ dy }) => dy).reduce((a, b) => a + b, 0) / dataSet.length;
+      const positiveDys = dataSet.map(({ dy }) => dy).filter((dy) => dy !== 0);
+      const meanDy =
+        positiveDys.reduce((a, b) => a + b, 0) / positiveDys.length;
       const { intercept, slope } = linearRegression(dataSet);
 
       const nDaysFrom1900ToNow = (() => {
@@ -58,6 +45,27 @@ namespace Stats {
       const diff = yForecast - dataSet[dataSet.length - 1].y;
       return { label, diff, meanDy, intercept, slope };
     });
+  };
+
+  const makeDots = (lines: MatchedReceiptLine[]) => {
+    const result: Dot[] = [];
+    for (const { date: x, amount: dy } of lines) {
+      const lastDot = result[result.length - 1];
+      if (lastDot === undefined) {
+        result.push({ x, y: dy, dy });
+      } else {
+        if (lastDot.x === x) {
+          lastDot.y += dy;
+        } else {
+          // for (let i = lastDot.x + 1; i < x; i++) {
+          //   dataSet.push({ x: i, y: lastDot.y, dy: 0 });
+          // }
+          const y = lastDot.y + dy;
+          result.push({ x, y, dy });
+        }
+      }
+    }
+    return result;
   };
 
   const linearRegression = (data: Array<{ x: number; y: number }>) => {

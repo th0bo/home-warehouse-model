@@ -14,6 +14,10 @@ interface ReceiptLine {
   date: number;
 }
 
+interface MatchedReceiptLine extends ReceiptLine {
+  commonLabel: string;
+}
+
 interface ListItem {
   commonLabel: string;
   weight: number;
